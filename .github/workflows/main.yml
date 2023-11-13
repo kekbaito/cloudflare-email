@@ -1,1 +1,23 @@
-on: push
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare Workers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Install
+        run: npm install
+      - name: Publish worker to Cloudflare
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: publish --env production
